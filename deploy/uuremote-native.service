@@ -1,0 +1,17 @@
+[Unit]
+Description=UU Remote Linux host
+After=uu-virtual-desktop.service
+Wants=uu-virtual-desktop.service
+
+[Service]
+Type=simple
+Environment=RUST_LOG=info
+Environment=DISPLAY=:99
+Environment=XAUTHORITY=%t/uu-virtual-99.Xauthority
+EnvironmentFile=-%h/.config/uu-vps-home-proxy/desktop.env
+ExecStart=%h/.local/bin/uuremote-server
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

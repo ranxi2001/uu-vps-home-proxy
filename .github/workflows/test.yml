@@ -1,0 +1,42 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        python: ['3.11', '3.12', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m unittest tests.test_profiles tests.test_install -v
+
+  isolated-network:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install network tools and verified sing-box 1.14.3
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y iproute2 nftables curl util-linux openssl tzdata
+          curl --fail --location --retry 3 --output /var/tmp/sing-box.tar.gz \
+            https://github.com/SagerNet/sing-box/releases/download/v1.14.3/sing-box-1.14.3-linux-amd64.tar.gz
+          echo 'e2bdf179c15a3652955dc44867e33ca0965c9c9b91b34267dcc5a5d639a5feee  /var/tmp/sing-box.tar.gz' | sha256sum --check
+          tar -xzf /var/tmp/sing-box.tar.gz -C /var/tmp
+          sudo install -m 0755 /var/tmp/sing-box-1.14.3-linux-amd64/sing-box /usr/local/bin/sing-box
+          test -c /dev/net/tun || sudo modprobe tun
+      - name: Real TUN, DNS, TLS, privilege and failure tests
+        run: sudo env UU_VPS_INTEGRATION=1 python3 -m unittest discover -v

@@ -1,0 +1,4 @@
+#!/usr/bin/env python3
+from uu_vps_proxy.manager import main
+
+raise SystemExit(main())

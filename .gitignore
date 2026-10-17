@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+build/
+dist/
+.env
+.env.*
+config.json
+state.json
+sing-box.json
+*.credentials.json
+runtime/
+private/
+*.log

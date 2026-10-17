@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "uu-vps-home-proxy"
+version = "0.1.0"
+description = "UU Remote desktop and UID-scoped residential TUN management for Linux VPS"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+dependencies = []
+
+[project.scripts]
+uu-vps-proxy = "uu_vps_proxy.manager:main"
+
+[tool.setuptools.packages.find]
+include = ["uu_vps_proxy*"]
